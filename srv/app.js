@@ -1,16 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const stuffRoutes = require('./routes/stuff');
-const userRoutes = require('./routes/user');
 const path = require('path');
 
+const userRoutes = require('./routes/user');
+const sauceRoutes = require('./routes/sauce');
+
+mongoose.set('strictQuery', true);
 mongoose.connect('mongodb+srv://devp6:FDjqR1o9jemQvIQ3@cluster0.uodckhn.mongodb.net/?retryWrites=true&w=majority',
   {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+  .then(() => console.log('MongoDB : Successful connection'))
+  .catch(() => console.log('MongoDB : Connection failed'));
 
 const app = express();
 
@@ -24,7 +26,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
-// app.use('/api/stuff', stuffRoutes);
 app.use('/api/auth', userRoutes);
-
+app.use('/api/sauces', sauceRoutes);
 module.exports = app;
