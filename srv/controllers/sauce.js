@@ -16,10 +16,9 @@ exports.readSauce = (req, res, next) => {
 
 exports.createSauce = (req, res, next) => {
   const sauceObj = JSON.parse(req.body.sauce);
-  delete sauceObj.userId; // nécessaire ? auparavant sauceObj._userId (undefined)
   const sauce = new Sauce({
     ...sauceObj,
-    userId: req.auth.userId, // pas la peine de le delete avant ! ça le met à jour au besoin...
+    userId: req.auth.userId,
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     likes: 0,
     dislikes: 0,
@@ -32,23 +31,18 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.updateSauce = (req, res, next) => {
-  const sauceObj = req.file
-    ? {
-      ...JSON.parse(req.body.sauce),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    }
-    : { ...req.body }
-  // delete sauceObj.userId;
-  // ???? again ! J'ai supprimé l'instruction précédente, c'était 'delete sauceObj._userId' mais cette propriété n'existe pas
-  // MDN : "Si la propriété qu'on souhaite supprimer n'existe pas, delete n'aura aucun effet et l'opération renverra true"
-  // et pourquoi supprimer sauceObj.userId puisque l'updateOne ne vaut que s'il est valide ?
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
       if (sauce.userId != req.auth.userId) {
         res.status(403).json({ message: 'Unauthorized request' });
-      } else { // Le sauce.userId est donc valide, ce ne peut être que celui retourné par MongoDB ! Pourquoi le supprimer auparavant de sauceObj ?
-        // console.log(sauceObj);
-        Sauce.updateOne({ _id: req.params.id }, { ...sauceObj, _id: req.params.id }) // meme pas sur que préciser '_id: req.params.id' soit utile
+      } else {
+        const sauceObj = req.file
+          ? {
+            ...JSON.parse(req.body.sauce),
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+          }
+          : req.body;
+        Sauce.updateOne({ _id: req.params.id }, sauceObj)
           .then(() => res.status(200).json({ message: 'Sauce updated' }))
           .catch(error => res.status(401).json({ error }));
       }
@@ -76,7 +70,6 @@ exports.deleteSauce = (req, res, next) => {
 exports.defineLike = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
-      console.log(req.body.like);
       switch (req.body.like) {
         case 0:
           sauce.usersLiked = sauce.usersLiked.filter(id => (id !== req.auth.userId));
@@ -94,7 +87,7 @@ exports.defineLike = (req, res, next) => {
       sauce.likes = sauce.usersLiked.length;
       sauce.dislikes = sauce.usersDisliked.length;
       Sauce.updateOne({ _id: req.params.id }, sauce)
-        .then(res.status(200).json({ message: 'Sauce updated' }))
+        .then(res.status(200).json({ message: `Like defined (${req.body.like})` }))
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
