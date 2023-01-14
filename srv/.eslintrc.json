@@ -1,0 +1,31 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": "eslint:recommended",
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "semi": [
+            "warn",
+            "always",
+            {
+                "omitLastInOneLineBlock": true
+            }
+        ],
+        "quotes": [
+            "warn",
+            "single"
+        ],
+        "no-undef": [
+            "warn"
+        ],
+        "no-unused-vars": [
+            "warn"
+        ]
+    }
+}
