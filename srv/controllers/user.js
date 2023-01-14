@@ -30,7 +30,7 @@ exports.login = (req, res, next) => {
             } else {
               res.status(200).json({
                 userId: user._id,
-                token: jwt.sign({ userId: user._id }, 'PIIQUANTE_TOKEN_SECRET', { expiresIn: '12h' })
+                token: jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '12h' })
               });
             }
           })
