@@ -42,6 +42,12 @@ exports.updateSauce = (req, res, next) => {
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
           }
           : req.body;
+        if (req.file) {
+          const filename = sauce.imageUrl.split('/images/')[1];
+          fs.unlink(`images/${filename}`, (error) => {
+            if (error) throw error;
+          });
+        }
         Sauce.updateOne({ _id: req.params.id }, sauceObj)
           .then(() => res.status(200).json({ message: 'Sauce updated' }))
           .catch(error => res.status(401).json({ error }));
