@@ -1,2 +1,8 @@
 node_modules/
+
+# The '.env' file should not reside on a GitHub repository in a production environment.
+# In this case, uncomment the following line.
+#.env
+
+# The 'images' folder contains user files only
 images/
