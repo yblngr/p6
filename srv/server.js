@@ -13,6 +13,8 @@ const normalizePort = val => {
   }
   return false;
 };
+
+// The PORT environment variable may be used to change the server port, wich defaults to 3000.
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
