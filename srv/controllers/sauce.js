@@ -57,7 +57,7 @@ exports.updateSauce = (req, res, next) => {
         if (req.file) {
           const filename = sauce.imageUrl.split('/images/')[1];
           fs.unlink(`images/${filename}`, (error) => {
-            if (error) throw error;
+            if (error) console.warn(error);
           });
         }
         Sauce.updateOne({ _id: req.params.id }, sauceObj)
