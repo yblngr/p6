@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
       const user = new User({
-        email: req.body.email,
+        email: req.body.email.toLowerCase(),
         password: hash
       });
       user.save()
@@ -24,7 +24,7 @@ exports.signup = (req, res, next) => {
 // Request  body : { email: String, password: String }
 // Response body : { userId: String, token: String }
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email })
+  User.findOne({ email: req.body.email.toLowerCase() })
     .then(user => {
       if (!user) {
         res.status(401).json({ message: 'Wrong email or password' });
