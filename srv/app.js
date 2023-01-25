@@ -1,4 +1,3 @@
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const express = require('express');
 const helmet = require('helmet');
@@ -6,8 +5,6 @@ const path = require('path');
 
 const userRoutes = require('./routes/user');
 const sauceRoutes = require('./routes/sauce');
-
-dotenv.config();
 
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.MONGODB_URI,
